@@ -235,11 +235,14 @@ class ExportableWandbRun:
         if self._files is None:
             files_dir = self._export_run_dir / "files"
             files_dir.mkdir(parents=True, exist_ok=True)
-            file_objs = [
-                file_obj
-                for file_obj in self.run.files()
-                if file_obj.size != 0 and "wandb_manifest.json.deadlist" not in file_obj.name
-            ]
+            try:
+                file_objs = [
+                    file_obj
+                    for file_obj in self.run.files()
+                    if file_obj.size != 0 and "wandb_manifest.json.deadlist" not in file_obj.name
+                ]
+            except TypeError:
+                file_objs = []
             downloaded = self._download_files(file_objs, files_dir)
             self._files = downloaded
 
