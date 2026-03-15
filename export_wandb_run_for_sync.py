@@ -343,6 +343,12 @@ def parse_args() -> argparse.Namespace:
         help="W&B API key. Defaults to WANDB_API_KEY.",
     )
     parser.add_argument(
+        "--api-timeout",
+        type=int,
+        default=int(os.environ.get("WANDB_API_TIMEOUT", "60")),
+        help="W&B public API timeout in seconds.",
+    )
+    parser.add_argument(
         "--entity",
         help="Default entity for run ids passed as project/run_id.",
     )
@@ -409,10 +415,10 @@ def normalize_run_path(raw: str, default_entity: str | None, default_project: st
     raise SyncExportError(f"Invalid run path '{raw}'.")
 
 
-def build_api(api_key: str | None, base_url: str) -> wandb.Api:
+def build_api(api_key: str | None, base_url: str, timeout: int) -> wandb.Api:
     if not api_key:
         raise SyncExportError("WANDB_API_KEY is required.")
-    return wandb.Api(api_key=api_key, overrides={"base_url": base_url})
+    return wandb.Api(api_key=api_key, timeout=timeout, overrides={"base_url": base_url})
 
 
 def created_at_to_stamp(created_at: str) -> str:
@@ -552,7 +558,9 @@ def main() -> int:
             raise SyncExportError("--history-samples must be a positive integer.")
         if args.file_download_workers <= 0:
             raise SyncExportError("--file-download-workers must be a positive integer.")
-        api = build_api(args.api_key, args.base_url)
+        if args.api_timeout <= 0:
+            raise SyncExportError("--api-timeout must be a positive integer.")
+        api = build_api(args.api_key, args.base_url, args.api_timeout)
         output_dir = Path(args.output_dir).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
 

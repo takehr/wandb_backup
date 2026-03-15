@@ -38,6 +38,12 @@ def parse_args() -> argparse.Namespace:
         help="W&B API key. Defaults to WANDB_API_KEY.",
     )
     parser.add_argument(
+        "--api-timeout",
+        type=int,
+        default=int(os.environ.get("WANDB_API_TIMEOUT", "60")),
+        help="W&B public API timeout in seconds.",
+    )
+    parser.add_argument(
         "--no-files",
         action="store_true",
         help="Skip downloading run files. The export will be less complete.",
@@ -96,8 +102,10 @@ def main() -> int:
             raise ValueError("--history-samples must be a positive integer.")
         if args.file_download_workers <= 0:
             raise ValueError("--file-download-workers must be a positive integer.")
+        if args.api_timeout <= 0:
+            raise ValueError("--api-timeout must be a positive integer.")
         project_path = normalize_project_path(args.project_path)
-        api = build_api(args.api_key, args.base_url)
+        api = build_api(args.api_key, args.base_url, args.api_timeout)
         output_dir = Path(args.output_dir).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
 

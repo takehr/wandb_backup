@@ -62,8 +62,8 @@ python sync_all_wandb_exports.py --exports-dir wandb-export
 Sync into a different entity / project:
 
 ```bash
-python /Users/haratakehiro/backup/sync_all_wandb_exports.py \
-  /Users/haratakehiro/backup/wandb-export/project_exports \
+python ./sync_all_wandb_exports.py \
+  ./wandb-export/project_exports \
   --entity entity \
   --project new_project
 ```
