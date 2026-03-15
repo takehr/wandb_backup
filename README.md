@@ -63,7 +63,7 @@ Sync into a different entity / project:
 
 ```bash
 python /Users/haratakehiro/backup/sync_all_wandb_exports.py \
-  /Users/haratakehiro/backup/wandb-export/reppo \
+  /Users/haratakehiro/backup/wandb-export/project_exports \
   --entity entity \
   --project new_project
 ```
