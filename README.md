@@ -30,6 +30,7 @@ python export_wandb_run_for_sync.py run_id --entity entity --project project
 Useful options:
 
 - `--output-dir wandb-export`
+- `--api-timeout 120`
 - `--overwrite`
 - `--no-files`
 - `--no-logs`
@@ -47,6 +48,7 @@ python export_wandb_project_for_sync.py entity/project
 
 Useful options:
 
+- `--api-timeout 120`
 - `--continue-on-error`
 - `--overwrite`
 - `--history-mode validated-sampled`
@@ -94,6 +96,7 @@ For runs where exact full-history export is unreliable, a practical command is:
 
 ```bash
 python export_wandb_run_for_sync.py entity/project/run_id \
+  --api-timeout 120 \
   --history-mode validated-sampled \
   --history-samples 1000000 \
   --file-download-workers 8 \
@@ -103,5 +106,7 @@ python export_wandb_run_for_sync.py entity/project/run_id \
 ## Known Limitations
 
 - Some runs appear to trigger duplicated rows from `wandb.Api().run(...).scan_history()`. In those cases, `full` can become very large or fail.
+- Some runs return `HTTP 500: context deadline exceeded` for history queries. This is usually a W&B backend-side failure in full-history GraphQL, not a local network timeout.
+- Increasing `--api-timeout` helps with slow requests and read timeouts, but it will not fix server-side `context deadline exceeded` errors.
 - `validated-sampled` is safer than plain `sampled`, but it is still based on W&B sampled history rather than a guaranteed raw-history export.
 - This repo includes a NumPy 2.0 compatibility shim for W&B importer code that still references `np.NaN`.
