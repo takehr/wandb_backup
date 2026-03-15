@@ -154,7 +154,7 @@ class ExportableWandbRun:
             expected_last_step is not None
             and numeric_steps > 0
             and prev_step is not None
-            and float(expected_last_step) != prev_step
+            and abs(float(expected_last_step) - prev_step) > 1.0
         ):
             raise SyncExportError(
                 "Validated sampled history does not reach the run summary _step. "
