@@ -17,14 +17,14 @@ Small helper scripts for exporting W&B runs into offline-run directories and syn
 ## Export A Single Run
 
 ```bash
-python export_wandb_run_for_sync.py takeh/project/run_id
+python export_wandb_run_for_sync.py entity/project/run_id
 ```
 
 Examples:
 
 ```bash
-python export_wandb_run_for_sync.py takeh/reppo/r0j0ruxo
-python export_wandb_run_for_sync.py r0j0ruxo --entity takeh --project reppo
+python export_wandb_run_for_sync.py entity/project/run_id
+python export_wandb_run_for_sync.py run_id --entity entity --project project
 ```
 
 Useful options:
@@ -42,7 +42,7 @@ Useful options:
 ## Export A Whole Project
 
 ```bash
-python export_wandb_project_for_sync.py takeh/reppo
+python export_wandb_project_for_sync.py entity/project
 ```
 
 Useful options:
@@ -57,6 +57,25 @@ Useful options:
 
 ```bash
 python sync_all_wandb_exports.py --exports-dir wandb-export
+```
+
+Sync into a different entity / project:
+
+```bash
+python /Users/haratakehiro/backup/sync_all_wandb_exports.py \
+  /Users/haratakehiro/backup/wandb-export/reppo \
+  --entity entity \
+  --project new_project
+```
+
+Dry-run first:
+
+```bash
+python sync_all_wandb_exports.py \
+  --exports-dir wandb-export \
+  --entity entity \
+  --project new_project \
+  --dry-run
 ```
 
 If `wandb sync` has protobuf runtime issues, use:
@@ -74,7 +93,7 @@ python wandb_sync_compat.py sync path/to/offline-run-dir
 For runs where exact full-history export is unreliable, a practical command is:
 
 ```bash
-python export_wandb_run_for_sync.py takeh/project/run_id \
+python export_wandb_run_for_sync.py entity/project/run_id \
   --history-mode validated-sampled \
   --history-samples 1000000 \
   --file-download-workers 8 \
